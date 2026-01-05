@@ -1,0 +1,187 @@
+#+LATEX_HEADER: \pagenumbering{gobble}
+#+LaTeX_HEADER: \usepackage[breaklinks=true]{hyperref}
+#+LaTeX_HEADER: \usepackage{xurl}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LaTeX_HEADER: \usepackage{pdfpages}
+#+LaTeX_HEADER: \AtEndEnvironment{listing}{\vspace{-20pt}}
+
+#+LaTeX_CLASS: koma-article
+#+LaTeX_CLASS_OPTIONS: [a4paper,11pt]
+#+LaTeX_HEADER: \setkomafont{disposition}{\normalfont\bfseries}
+#+LaTeX_HEADER: \setkomafont{sectioning}{\normalfont\bfseries}
+#+LaTeX_HEADER: \usepackage[T1]{fontenc}
+#+LaTeX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LaTeX_HEADER: \linespread{1.3}
+
+#+LATEX_HEADER: \usepackage{pgfplots}
+
+#+LATEX_HEADER: \usepackage[english]{babel}
+#+LANGUAGE: en-US
+# Distance between Footnotes
+#+LATEX_HEADER: \setlength{\footnotesep}{\baselineskip}
+
+#+LaTeX_HEADER: \usepackage{pdfpages}
+
+#+INCLUDE: ./deckblatt.org
+\newpage
+
+#+OPTIONS: ^:nil toc:nil date:nil
+\newpage
+\pagenumbering{gobble}
+#+TOC: headlines 3
+\newpage
+#+LATEX: \pagenumbering{arabic}
+* Introduction
+Reproducibility is a fundamental principle of scientific work. While it is often associated with the repeatability of experiments or data analyses, it increasingly also applies to the process of scientific writing itself. Today, many research papers are created in complex digital environments composed of numerous interdependent tools such as text editors, LaTeX distributions, citation managers, and various plugins.
+
+Over time, these dependencies can change, become incompatible, or behave differently across systems. As a result, inconsistencies arise that hinder not only the reproducibility of scientific texts but also long-term collaboration and archival stability. Commercial platforms such as Overleaf [cite:@OverleafOnlineLaTeXEditor] offer a consistent environment for scientific writing, but they are subscription-based[fn:2] and require authors to write directly in plain LaTeX, a workflow that is often cumbersome and impractical for everyday writing tasks. The goal of this project is to build a fully reproducible, open-source scientific writing environment based on Emacs [cite:@GNUEmacsGNU] and Nix [cite:@NixNixOSDeclarative].
+
+* Components
+
+This environment is built from several layers, each ensuring reproducibility and collaboration. 
+The following sections describe each component and its role in the reproducible scientific writing workflow.
+
+** Nix 
+Nix is a declarative package and system manager that enables the complete and reproducible specification of software environments [cite:@NixNixOSDeclarative]. All dependencies including the LaTeX toolchain, Emacs packages and auxiliary tools are defined in a single configuration and are isolated from the host system. This guarantees that the same writing environment can be rebuilt identically on any machine, independent of system libraries, operating system state, or user configuration. This strict separation of configuration and execution forms the foundation of a stable and reproducible scientific writing workflow.
+*** Flakes 
+Nix Flakes provide a modern, structured approach to managing Nix configurations. They introduce explicit dependency pinning, clear input/output interfaces, and reproducible builds based on version-controlled revisions. In this project, Flakes are used to lock the writing environment, including Emacs, its extensions, and the LaTeX stack, to specific software versions. This ensures that a document can be reopened, compiled, and edited years later in exactly the same environment in which it was originally created. [cite:@FlakesNixOSWiki]
+
+*** Home Manager
+Home Manager provides declarative, user-level configuration within the Nix ecosystem. It manages dotfiles, application settings, and development tools as part of the same reproducible specification as the software environment. In this project, it ensures that not only the installed programs, but also their configurations, including Emacs and supporting utilities, can be restored consistently across different machines. [cite:@NixcommunityHomemanagerManage]
+
+** Emacs
+Emacs serves as the central workspace, integrating text authoring, knowledge organization, and reference management within a single extensible tool. Thanks to its modular architecture, Emacs can function as a “writing operating system” that supports complex scientific workflows. Combined with Nix, the Emacs configuration and installed packages are also version-stable, enabling transparent, reproducible editing environments across systems and collaborators. Since some Emacs packages rely on system-level dependencies (for example LaTeX packages), these dependencies can affect or break the environment. Nix provides a declarative way to manage these dependencies and ensure a stable, reproducible setup. [cite:@GNUEmacsGNU]
+
+*** Org-Mode
+Org-mode is the core of the writing process. Texts are written in a lightweight, structured markup format that serves both as an authoring medium and as a source for export pipelines. Org-mode supports figures, tables, source code blocks and it can export documents to LaTeX, PDF, HTML and several more. This approach decouples the writing process from the final publication format while preserving structure and traceability. [cite:@OrgMode]
+
+*** Org-Citar
+Org-Citar provides integrated reference management within the Org-mode workflow. It works with external BibTeX or CSL-JSON libraries and offers citation insertion, bibliography management, and contextual lookup directly inside Emacs. References remain machine-readable, version-controlled, and project-local, avoiding dependence on proprietary database systems while supporting collaboration and archival stability. [cite:@GitHubEmacscitarCitar]
+
+*** Org-Roam
+Org-Roam extends the environment with a networked knowledge base inspired by the /Zettelkasten/ method. Research notes, conceptual fragments, and literature annotations can be interlinked, forming an evolving graph of ideas that supports long-term scholarly thinking and writing. Within the setup, Org-Roam contributes not only to document production but also to the structured development of scientific arguments over time.
+[cite:@Orgroam]
+
+* Installation 
+To set up the reproducible scientific writing environment, you first need to install the Nix package manager. The following sections describe the installation process.
+
+** System-wide Installation
+It can be installed as either a multi-user or single-user installation [cite:@DownloadNixNixOS].
+After installation, activate the environment variables:
+#+begin_src bash
+. ~/.nix-profile/etc/profile.d/nix.sh
+#+end_src
+Since the environment is based on Nix flakes, you must enable them:
+#+begin_src bash
+mkdir -p ~/.config/nix/ && echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+#+end_src
+This creates the necessary Nix configuration file and enables flake support.
+Next, build and activate the scientific Home Manager configuration:
+#+begin_src bash
+nix run github:nix-community/home-manager -- switch --flake .#rescue
+#+end_src
+
+This command installs and activates the reproducible writing environment. Once done, you can start Emacs and the environment should work. To test the environment, open the provided template ~template/Example.org~ in Emacs:
+#+begin_src bash
+C-x f template/Example.org
+#+end_src
+
+** Docker-based Installation
+This repository also provides a Dockerfile for testing, but GUI support is not included and some functionalities may not work. To use it install docker and run:
+#+begin_src bash
+ docker build --network=host -t rescue .
+ docker run -it --rm rescue
+ . ~/.nix-profile/etc/profile.d/nix.sh
+#+end_src
+
+* Usage
+The provided template is structured to support a complete scientific writing workflow. At the top of the template, you will find **LaTeX header configurations**, and at the bottom, **bibliography settings** are included. These configurations are automatically exported to the intermediate LaTeX document before compiling the final PDF, ensuring that the document formatting and references remain consistent.
+
+** Org-Roam 
+First of all Org-roam can be used as a personal knowledge base.
+Use ~C-c n f~ to create a new node or to search for an existing one. Links to other nodes can be inserted at point with ~C-c n i~.
+The Org-roam buffer can be opened with ~C-c n l~, where all backlinks and metadata for the current node are displayed.
+A graphical overview of the knowledge base is available via ~C-c o g~, which opens an interactive visualization in the browser.
+
+** Org-Citar
+Citations can be inserted directly in Emacs using Org-Citar with the keybinding ~C-c b~ [cite:@GitHubEmacscitarCitar]. Bibliography files are typically stored in ~/home/<user>/Library/~, but the location can be customized in the ~scientific.nix~ configuration. Bibliographies may be maintained manually or managed using an external tool such as Zotero [cite:@ZoteroYourPersonal]. For automated export from Zotero, the *Better BibTeX* plugin must be installed and configured [cite:@BetterBibTeX].
+
+After a citation has been inserted, pressing Enter on the citation link opens a resource selection menu. From this menu, the referenced bibliography entry can be opened, or an Org-roam node for the reference can be created. This enables notes and summaries to be associated directly with a citation.
+
+** Additional Org-Mode Features
+Footnotes are easily added using ~C-c C-x f~ [fn:1], allowing for inline commentary and additional references without disrupting the main text flow. Images can be included by specifying their file paths, as demonstrated in Figure [[fig:example]].
+
+#+CAPTION: This is an example of an image created using the Org syntax.
+#+NAME: fig:example
+#+ATTR_LATEX: :placement [H] :width 250
+[[/home/lionel/development/osws/template/Example.org_20260106_104125_WlvGfK.png]]
+
+Tables can also be added and maintained efficiently within Org-mode (See Table [[table]]).
+
+#+CAPTION: This is an example of a table created using the Org syntax.
+#+NAME: table
+| Project        | Category      | Status      | Tasks | Completed | Progress | Priority |
+|----------------+---------------+-------------+-------+-----------+----------+----------|
+| Literature Rev | Research      | In Review   |     8 |         6 |      75% | High     |
+| Data Analysis  | Computing     | Ongoing     |    12 |         5 |      42% | Medium   |
+| Writing Draft  | Manuscript    | Planned     |     5 |         0 |       0% | High     |
+
+For more advanced visualizations that cannot be generated directly in Org-mode, LaTeX or TikZ code can be embedded directly in the document, as shown in Figure [[fig:all-optimisations]]. This approach allows the creation of complex charts and plots while preserving the full reproducibility of the writing environment.
+
+#+CAPTION: This is an example of a graph created using embedded TikZ code.
+#+NAME: fig:all-optimisations
+\begin{figure}[ht]
+\begin{tikzpicture}
+  \begin{axis}[
+    xbar,
+    ytick=data,
+    height=5cm, width=15cm,
+    tickwidth=0pt,
+    enlarge y limits=0.3,
+    enlarge x limits=0.2,
+    symbolic y coords={Unsafe, Safe, Base},
+    nodes near coords,
+    legend style={
+            at={(0.6,0.2)},
+            anchor=west,
+            legend columns=-1,
+            /tikz/every even column/.append style={column sep=0.5cm}
+        },
+    axis lines=box,
+    xtick=\empty
+  ]
+  \addplot [fill={rgb:red,23;green,105;blue,170},draw=none] coordinates {(59600,Base) (46100,Safe) (32690,Unsafe)};
+  \addplot [fill={rgb:red,23;green,280;blue,170},draw=none] coordinates {(72270,Base) (58050,Safe) (39880,Unsafe)};
+  \legend{Huffbench, Depthconv}
+  \end{axis}
+\end{tikzpicture}
+\end{figure}
+
+Finally, to export your Org document to PDF, you can use the **Org Export Dispatcher** by pressing ~C-c C-e~. From there, select the option to export to PDF by pressing ~l p~. The resulting PDF file will be generated in the same directory as the original Org file.
+
+
+* Summary
+This project provides a fully reproducible scientific writing environment built on **Emacs** and **Nix**, combining structured text authoring, integrated reference management, and a networked knowledge base. By leveraging Nix, Flakes, and Home Manager, the entire environment, including all dependencies, configurations, and Emacs packages, is version-controlled and can be reproduced identically on any machine. The key benefits of the environment include:
+- **Reproducibility:** All software and user configurations are declarative and isolated, ensuring the same environment can be rebuilt in the future or shared with collaborators.  
+- **Integrated workflow:** Org-mode, Org-Citar, and Org-Roam provide seamless support for structured writing, citations, and knowledge management.  
+- **Flexibility:** The environment supports exporting to PDF via LaTeX, embedding images, tables, and charts, and adding footnotes or other scholarly annotations easily.  
+- **Extensibility:** Users can extend the workflow with custom Emacs packages or additional Nix-managed tools, without breaking reproducibility.  
+
+Overall, this setup addresses common challenges in scientific writing, dependency drift, collaboration, and archival stability, while remaining fully open-source and extensible. Users can immediately begin writing, managing references, and building reproducible research documents without manual environment setup.
+
+* References @@latex: \addcontentsline{toc}{section}{References}@@
+:PROPERTIES:
+:UNNUMBERED:
+:END:
+#+CITE_EXPORT: csl apa.csl
+#+LATEX_HEADER: \usepackage[natbib=true, style=apa]{biblatex}
+#+LATEX: \setlength\parindent{0pt}
+#+LATEX_HEADER: \setlength{\parskip}{0.9\baselineskip}  % Anpassung des vertikalen Abstand
+#+PRINT_BIBLIOGRAPHY:
+\newpage
+
+* Footnotes
+
+[fn:2]There are often free versions available, but they tend to have a limited range of features. 
+[fn:1] Footnotes can be added so easily.

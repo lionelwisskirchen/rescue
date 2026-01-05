@@ -1,0 +1,22 @@
+\thispagestyle{empty}
+#+LATEX: \begin{center}
+\includegraphics[width=10cm]{RZ_OTH_AW_Logo_Zweizeiler_CMYK.jpg}
+
+\vspace{2cm}
+\LARGE \textbf{Building a Reproducible Scientific Writing Environment using Emacs and Nix}
+#+LATEX: \end{center}
+
+#+LATEX: \vspace{2cm}
+#+LATEX: \begin{center}
+\hrulefill \hspace{0.7cm} \LARGE \textit{Project Documentation} \hspace{0.7cm} \hrulefill
+#+LATEX: \end{center}
+#+LATEX: \vspace{5cm}
+#+LATEX: \begin{center}
+
+\begin{tabular}{l l}
+      \textbf{Author}:          & Lionel Wisskirchen \\
+      \textbf{Course}:          & Open-Source Software for the Working Scientist \\
+      \textbf{Date}: & \today \\
+      \textbf{Program of Study}: & Master of Applied Research in Engineering Sciences  \\
+\end{tabular}
+#+LATEX: \end{center}
