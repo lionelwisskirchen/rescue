@@ -39,7 +39,7 @@
           ./modules/org-agenda.nix
           ./modules/org-roam.nix
           ./modules/presentations.nix    
-          ./modules/rescue.nix
+          ./modules/scientific.nix
           {
 
             home.stateVersion = "26.05";

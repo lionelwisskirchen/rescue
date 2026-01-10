@@ -17,7 +17,7 @@ COPY ./template/bibliography.bib ./Library/
 RUN chown -R rescue:rescue .
 RUN chown rescue:rescue ./Library/*
 USER rescue
-
+# Installation process
 RUN curl -L https://nixos.org/nix/install | sh -s -- --no-daemon --yes
 RUN mkdir -p ~/.config/nix/
 RUN echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf 
