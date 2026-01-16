@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Building a Reproducible Scientific Writing Environment using Emacs and Nix</title>
+<meta name="author" content="Lionel Wisskirchen"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/solarized.css" id="theme"/>
+
+<style> .title { font-size: 70px !important; } .author{ font-size: 30px !important;}  p,li {font-size: 27px}</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Building a Reproducible Scientific Writing Environment using Emacs and Nix</h1><p class="subtitle"></p>
+<h2 class="author">Lionel Wisskirchen</h2>
+</section>
+
+<section>
+<section id="slide-org2e685a4">
+<h2 id="org2e685a4">Motivation</h2>
+
+<div id="org8944f8b" class="figure">
+<p><img src="./Presentation.org_20260109_145309_bNfnk8.png" alt="Presentation.org_20260109_145309_bNfnk8.png" width="60%" />
+</p>
+</div>
+<ul class="fragment appear">
+<li>Reproducibility is a core principle of science</li>
+<li>Scientific papers today rely on complex digital environments</li>
+<li>❌ Dependencies can break, become incompatible</li>
+<li>❌ Results: Inconsistencies, hindered collaboration and fragile stability</li>
+
+</ul>
+
+<aside class="notes">
+<ul>
+<li>Often associated with the repeatability of experiments or data analyses</li>
+<li>Scientific papers today rely on complex digital environments
+<ul>
+<li>Typesetting (LaTeX) distributions</li>
+<li>Citation managers</li>
+<li>Various plugins and dependencies</li>
+
+</ul></li>
+<li>Paper compiles on my machine, but not on yours</li>
+<li>LaTeX update breaks bibliography two days before deadline</li>
+
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-org79d7d92">
+<h2 id="org79d7d92">Existing Solutions</h2>
+
+<div id="orgc3c5f32" class="figure">
+<p><img src="./overleaf.png" alt="overleaf.png" width="25%" />
+</p>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" class="fragment appear" style="font-size: 20px">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Pros</th>
+<th scope="col" class="org-left">Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">✅ Stable and consistent environment</td>
+<td class="org-left">❌ Subscription based (for all functionalities)</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">✅ Easy collaboration</td>
+<td class="org-left">❌ Slow compilation</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">❌ No offline support</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">❌ Plain LaTeX</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul>
+<li>Writing plain LaTex is mpractical for everyday writing tasks</li>
+
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-orgc11e82a">
+<h2 id="orgc11e82a">Components</h2>
+
+<div id="orgec25625" class="figure">
+<p><img src="./stack.png" alt="stack.png" width="70%" />
+</p>
+</div>
+<aside class="notes">
+<ul>
+<li>Emacs: a customizable free software text editor</li>
+<li>Nix: a declarative package and system manager</li>
+<li>Emacs as writing environment</li>
+<li>Nix to define configurations and system dependencies</li>
+<li>We use the Nix Package Manager to create a reproducible Emacs configuration</li>
+
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-orgf334ef6">
+<h2 id="orgf334ef6">Emacs</h2>
+
+<div id="orgd29160a" class="figure">
+<p><img src="./emacs.png" alt="emacs.png" width="21%" align="left" />
+</p>
+</div>
+<ul width="45%" align="left" style="padding-top: 30px">
+<li>Powerful, highly extensible and customizable text editor</li>
+<li>Developed by Richard Stallman in the 1980s</li>
+<li>Completely keyboard driven</li>
+<li>Single environment for writing, coding, presentations, &#x2026;</li>
+<li>Packages for nearly every use-case</li>
+
+</ul>
+</section>
+<section id="slide-orgf2cbe1a">
+<h3 id="orgf2cbe1a">Org-Mode</h3>
+
+<div id="orgc5278b4" class="figure">
+<p><img src="./org.png" alt="org.png" width="21%" align="left" />
+</p>
+</div>
+<ul width="45%" align="left" style="padding-top: 90px">
+<li>Mode for document editing, formatting and organizing</li>
+<li>Supports tables, figures, source code blocks</li>
+<li>Different export backends</li>
+
+</ul>
+<aside class="notes">
+<ul>
+<li>A bit like the markdown format</li>
+<li>Can export to LaTeX, PDF, HTML</li>
+
+</ul>
+
+</aside>
+</section>
+<section id="slide-org84fb86e">
+<h3 id="org84fb86e">Org-Citar</h3>
+
+<div id="org0945729" class="figure">
+<p><img src="./bibtex.png" alt="bibtex.png" width="21%" align="left" />
+</p>
+</div>
+
+<ul width="45%" align="left" style="padding-top: 70px">
+<li>Integrated reference management for Org-mode</li>
+<li>Supports citation insertion and bibliography management</li>
+<li>Contextual lookup directly inside Emacs</li>
+<li>Works with external BibTeX or CSL-JSON libraries</li>
+
+</ul>
+</section>
+<section id="slide-org2312a74">
+<h3 id="org2312a74">Org-Roam</h3>
+
+<div id="org96e4b69" class="figure">
+<p><img src="./roam.png" alt="roam.png" width="21%" align="left" />
+</p>
+</div>
+
+<ul width="45%" align="left" style="padding-top: 70px">
+<li>Networked knowledge base inspired by <i>Zettelkasten</i></li>
+<li>Interlinked notes, literature annotations and ideas</li>
+<li>Supports long-term research</li>
+
+</ul>
+<aside class="notes">
+<ul>
+<li>Zettelkasten principle developed by Niklas Luhmanns
+<ul>
+<li>One of Germany’s most influential sociologists</li>
+<li>Personal knowledge management method</li>
+<li>Notes are recorded on cards, sourced and linked together</li>
+<li>Create a flexible, growing network of ideas</li>
+<li>Luhmann had ca. 90.000 Nodes in paper form</li>
+
+</ul></li>
+
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-org1fb2f88">
+<h2 id="org1fb2f88">Nix</h2>
+
+<div id="org8686603" class="figure">
+<p><img src="./nix.png" alt="nix.png" width="21%" align="left" />
+</p>
+</div>
+
+<ul width="45%" align="left" style="padding-top: 50px">
+<li>Emacs alone ≠ reproducible system dependencies</li>
+<li>Declarative package and system manager</li>
+<li>NixOS is a linux distribution based on Nix</li>
+
+</ul>
+<aside class="notes">
+<ul>
+<li>Übergang: Still external dependencies from Emacs to system packages like (Latex etc.)</li>
+<li>In ubuntu apt or in arch pacman</li>
+<li>Reproducible and declarative software management</li>
+
+</ul>
+
+</aside>
+</section>
+<section id="slide-org08b6df0">
+<h3 id="org08b6df0">Flakes</h3>
+
+<div id="org2ac2375" class="figure">
+<p><img src="./flake.png" alt="flake.png" width="21%" align="left" />
+</p>
+</div>
+
+<ul width="45%" align="left" style="padding-top: 50px">
+<li>Modern structure for Nix configurations</li>
+<li>Explicit version pinning and deterministic dependencies</li>
+<li>Often used in complex development environments</li>
+
+</ul>
+<aside class="notes">
+<ul>
+<li>Ensures that writing environment is identical across machines</li>
+<li>Locks Emacs, its packages and LaTeX stack to specific versions</li>
+
+</ul>
+
+</aside>
+</section>
+<section id="slide-org0ed4f06">
+<h3 id="org0ed4f06">Home Manager</h3>
+
+<div id="org957e672" class="figure">
+<p><img src="./home_manager.png" alt="home_manager.png" width="21%" align="left" />
+</p>
+</div>
+
+<ul width="45%" align="left" style="padding-top: 50px">
+<li>Declarative, user-level configuration manager</li>
+<li>Manages dotfiles, app settings  and dev tools</li>
+<li>Guarantees reproducible user configuration</li>
+
+</ul>
+<aside class="notes">
+<ul>
+<li>Stores configuration files to the right place</li>
+<li>Guarantees reproducible user configuration, including Emacs and its extensions</li>
+
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-org052cba4">
+<h2 id="org052cba4">Demo</h2>
+
+<div id="orgd84574a" class="figure">
+<p><img src="./comic.png" alt="comic.png" width="70%" align="center" />
+</p>
+</div>
+
+<p>
+<a href="https://github.com/lionelwisskirchen/ReScUE">https://github.com/lionelwisskirchen/ReScUE</a>
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org4000b75">
+<h2 id="org4000b75">Summary</h2>
+<ul>
+<li>Fully reproducible scientific writing environment with Emacs and Nix</li>
+<li>Completely Open Source</li>
+<li>Integrated workflow: Org-mode, Org-Citar, Org-Roam</li>
+<li>No need to write plain LaTeX</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org82e55e2">
+<h2 id="org82e55e2">Questions?</h2>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+plugins: [RevealMarkdown, RevealZoom, RevealNotes],
+slideNumber:"c"
+});
+
+</script>
+</body>
+</html>

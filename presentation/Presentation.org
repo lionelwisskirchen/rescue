@@ -1,0 +1,168 @@
+#+LANGUAGE: en
+#+AUTHOR: Lionel Wisskirchen
+
+:REVEAL_PROPERTIES:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_REVEAL_JS_VERSION: 4
+#+REVEAL_THEME: solarized
+#+OPTIONS: timestamp:nil toc:nil num:nil
+#+REVEAL_INIT_OPTIONS: slideNumber:"c"
+#+HTML_HEAD: <style> .title { font-size: 70px !important; } .author{ font-size: 30px !important;}  p,li {font-size: 27px}</style>
+:END:
+
+#+TITLE: Building a Reproducible Scientific Writing Environment using Emacs and Nix
+
+* Motivation
+#+ATTR_HTML: :width 60%
+[[./Presentation.org_20260109_145309_bNfnk8.png]]
+#+ATTR_REVEAL: :frag appear 
+- Reproducibility is a core principle of science
+- Scientific papers today rely on complex digital environments
+- ❌ Dependencies can break, become incompatible
+- ❌ Results: Inconsistencies, hindered collaboration and fragile stability
+  
+#+BEGIN_NOTES
+- Often associated with the repeatability of experiments or data analyses
+- Scientific papers today rely on complex digital environments
+  - Typesetting (LaTeX) distributions
+  - Citation managers
+  - Various plugins and dependencies
+- Paper compiles on my machine, but not on yours
+- LaTeX update breaks bibliography two days before deadline
+#+END_NOTES
+
+* Existing Solutions
+#+ATTR_HTML: :width 25%
+[[./overleaf.png]]
+
+#+ATTR_REVEAL: :frag appear 
+#+ATTR_HTML: :style  font-size: 20px
+| Pros                                 | Cons                                            |
+|--------------------------------------+-------------------------------------------------|
+| ✅ Stable and consistent environment | ❌ Subscription based (for all functionalities) |
+|--------------------------------------+-------------------------------------------------|
+| ✅ Easy collaboration                | ❌ Slow compilation                             |
+|--------------------------------------+-------------------------------------------------|
+|                                      | ❌ No offline support                           |
+|--------------------------------------+-------------------------------------------------|
+|                                      | ❌ Plain LaTeX                                  |
+
+#+BEGIN_NOTES
+- Writing plain LaTex is mpractical for everyday writing tasks  
+#+END_NOTES
+ 
+
+* Components
+#+ATTR_HTML: :width 70%
+[[./stack.png]]
+#+BEGIN_NOTES
+- Emacs: a customizable free software text editor
+- Nix: a declarative package and system manager  
+- Emacs as writing environment
+- Nix to define configurations and system dependencies
+- We use the Nix Package Manager to create a reproducible Emacs configuration
+#+END_NOTES
+
+* Emacs
+#+ATTR_HTML: :width 21% :align left 
+[[./emacs.png]]
+#+ATTR_HTML: :width 45% :align left :style padding-top: 30px
+- Powerful, highly extensible and customizable text editor  
+- Developed by Richard Stallman in the 1980s                              
+- Completely keyboard driven                                              
+- Single environment for writing, coding, presentations, ...              
+- Packages for nearly every use-case
+  
+
+** Org-Mode
+#+ATTR_HTML: :width 21% :align left
+[[./org.png]]
+#+ATTR_HTML: :width 45% :align left :style padding-top: 90px
+- Mode for document editing, formatting and organizing
+- Supports tables, figures, source code blocks
+- Different export backends
+#+BEGIN_NOTES
+- A bit like the markdown format
+- Can export to LaTeX, PDF, HTML
+#+END_NOTES
+
+** Org-Citar
+#+ATTR_HTML: :width 21% :align left
+[[./bibtex.png]]
+
+#+ATTR_HTML: :width 45% :align left :style padding-top: 70px
+- Integrated reference management for Org-mode
+- Supports citation insertion and bibliography management
+- Contextual lookup directly inside Emacs  
+- Works with external BibTeX or CSL-JSON libraries   
+
+** Org-Roam
+#+ATTR_HTML: :width 21% :align left
+[[./roam.png]]
+
+#+ATTR_HTML: :width 45% :align left :style padding-top: 70px
+- Networked knowledge base inspired by /Zettelkasten/
+- Interlinked notes, literature annotations and ideas
+- Supports long-term research 
+#+BEGIN_NOTES
+- Zettelkasten principle developed by Niklas Luhmanns
+  - One of Germany’s most influential sociologists
+  - Personal knowledge management method
+  - Notes are recorded on cards, sourced and linked together
+  - Create a flexible, growing network of ideas
+  - Luhmann had ca. 90.000 Nodes in paper form
+#+END_NOTES
+  
+* Nix
+#+ATTR_HTML: :width 21% :align left
+[[./nix.png]]
+
+#+ATTR_HTML: :width 45% :align left :style padding-top: 50px
+- Emacs alone ≠ reproducible system dependencies  
+- Declarative package and system manager
+- NixOS is a linux distribution based on Nix
+#+BEGIN_NOTES
+- Übergang: Still external dependencies from Emacs to system packages like (Latex etc.)
+- In ubuntu apt or in arch pacman
+- Reproducible and declarative software management  
+#+END_NOTES
+
+** Flakes
+#+ATTR_HTML: :width 21% :align left
+[[./flake.png]]
+
+#+ATTR_HTML: :width 45% :align left :style padding-top: 50px
+- Modern structure for Nix configurations
+- Explicit version pinning and deterministic dependencies
+- Often used in complex development environments
+#+BEGIN_NOTES
+- Ensures that writing environment is identical across machines
+- Locks Emacs, its packages and LaTeX stack to specific versions  
+#+END_NOTES
+
+** Home Manager
+#+ATTR_HTML: :width 21% :align left
+[[./home_manager.png]]
+
+#+ATTR_HTML: :width 45% :align left :style padding-top: 50px
+- Declarative, user-level configuration manager
+- Manages dotfiles, app settings  and dev tools
+- Guarantees reproducible user configuration
+#+BEGIN_NOTES
+- Stores configuration files to the right place
+- Guarantees reproducible user configuration, including Emacs and its extensions  
+#+END_NOTES
+
+* Demo
+#+ATTR_HTML: :width 70% :align center
+[[./comic.png]]
+
+https://github.com/lionelwisskirchen/ReScUE
+
+* Summary
+- Fully reproducible scientific writing environment with Emacs and Nix
+- Completely Open Source
+- Integrated workflow: Org-mode, Org-Citar, Org-Roam
+- No need to write plain LaTeX 
+
+* Questions?
